@@ -71,7 +71,16 @@
 #include "audit.h"
 
 int selinux_android_netlink_getneigh;
-=======
+
+/* Policy capability names */
+char *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
+	"network_peer_controls",
+	"open_perms",
+	"compat1",
+	"always_check_network",
+	"compat2"
+};
+
 int selinux_policycap_openperm;
 int selinux_policycap_alwaysnetwork;
 
@@ -1985,6 +1994,9 @@ bad:
 
 static void security_load_policycaps(void)
 {
+	unsigned int i;
+	struct ebitmap_node *node;
+
 	selinux_policycap_netpeer = ebitmap_get_bit(&policydb.policycaps,
 						  POLICYDB_CAPABILITY_NETPEER);
 	selinux_policycap_openperm = ebitmap_get_bit(&policydb.policycaps,
@@ -1993,6 +2005,17 @@ static void security_load_policycaps(void)
 						  POLICYDB_CAPABILITY_ALWAYSNETWORK);
 
 	selinux_android_netlink_getneigh = policydb.android_netlink_getneigh;
+
+	for (i = 0; i < ARRAY_SIZE(selinux_policycap_names); i++)
+		pr_info("SELinux:  policy capability %s=%d\n",
+			selinux_policycap_names[i],
+			ebitmap_get_bit(&policydb.policycaps, i));
+
+	ebitmap_for_each_positive_bit(&policydb.policycaps, node, i) {
+		if (i >= ARRAY_SIZE(selinux_policycap_names))
+			pr_info("SELinux:  unknown policy capability %u\n",
+				i);
+	}
 }
 
 static int security_preserve_bools(struct policydb *p);
