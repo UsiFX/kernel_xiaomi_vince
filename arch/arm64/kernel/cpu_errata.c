@@ -171,7 +171,7 @@ static void enable_psci_bp_hardening(const struct arm64_cpu_capabilities *entry)
 {
 	if (psci_ops.get_version)
 		install_bp_hardening_cb(entry,
-				       (bp_hardening_cb_t)psci_ops.get_version,
+				       psci_ops.get_version,
 				       __psci_hyp_bp_inval_start,
 				       __psci_hyp_bp_inval_end);
 }
