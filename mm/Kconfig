@@ -638,16 +638,6 @@ config ZSMALLOC_STAT
 	  information to userspace via debugfs.
 	  If unsure, say N.
 
-config VMAP_LAZY_PURGING_FACTOR
-	int "multiplier to the size of purged vmap areas"
-	default "8" if ARM
-	default "32"
-	help
-	  It is used as a multiplier to the max VA pages purged in a
-	  single attempt. For 32-bit in order to reduce fragmentation
-	  of vmalloc space, we decrease the default value to "8".
-
-
 config GENERIC_EARLY_IOREMAP
 	bool
 
@@ -786,3 +776,11 @@ config SPECULATIVE_PAGE_FAULT
 	 detected or because underlying PMD or PTE tables are not yet
 	 allocating, it is failing its processing and a classic page fault
 	 is then tried.
+
+config VM_MAX_READAHEAD
+	int "default max readahead window size"
+	default 128
+	help
+	 This sets the VM_MAX_READAHEAD value to allow the readahead window
+	 to grow to a maximum size of configured. This will benefit sequential
+	 read throughput and thus early boot performance.
