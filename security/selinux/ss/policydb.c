@@ -1,4 +1,4 @@
-/*
+c/*
  * Implementation of the policy database.
  *
  * Author : Stephen Smalley, <sds@epoch.ncsc.mil>
@@ -2331,10 +2331,6 @@ int policydb_read(struct policydb *p, void *fp)
 	}
 	p->reject_unknown = !!(le32_to_cpu(buf[1]) & REJECT_UNKNOWN);
 	p->allow_unknown = !!(le32_to_cpu(buf[1]) & ALLOW_UNKNOWN);
-
-	if ((le32_to_cpu(buf[1]) & POLICYDB_CONFIG_ANDROID_NETLINK_ROUTE)) {
-		p->android_netlink_route = 1;
-	}
 
 	if ((le32_to_cpu(buf[1]) & POLICYDB_CONFIG_ANDROID_NETLINK_GETNEIGH)) {
 		p->android_netlink_getneigh = 1;
