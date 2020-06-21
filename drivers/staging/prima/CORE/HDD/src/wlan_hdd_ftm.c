@@ -1584,7 +1584,9 @@ nl_srv_exit(pHddCtx->ptt_pid);
 #else
 nl_srv_exit();
 #endif /* WLAN_KD_READY_NOTIFIER */
+#ifdef PTT_SOCK_SVC_ENABLE
 ptt_sock_deactivate_svc(pHddCtx);
+#endif
 err_ftm_register_wext_close:
 hdd_UnregisterWext(pAdapter->dev);
 
@@ -1635,8 +1637,9 @@ int wlan_hdd_ftm_close(hdd_context_t *pHddCtx)
 #else
     nl_srv_exit();
 #endif /* WLAN_KD_READY_NOTIFIER */
+#ifdef PTT_SOCK_SVC_ENABLE
     ptt_sock_deactivate_svc(pHddCtx);
-
+#endif
     //TODO----------
     //Deregister the device with the kernel
     hdd_UnregisterWext(pAdapter->dev);

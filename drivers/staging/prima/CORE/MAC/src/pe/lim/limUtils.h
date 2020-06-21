@@ -437,7 +437,6 @@ tANI_BOOLEAN limCheckHTChanBondModeChange(tpAniSirGlobal pMac,
                                                   tANI_U8 beaconSecChanWidth,
                                                   tANI_U8 currentSecChanWidth,
                                                   tANI_U8 staId);
-#ifdef FEATURE_WLAN_DIAG_SUPPORT
 
 typedef enum
 {
@@ -519,10 +518,11 @@ typedef enum
     WLAN_PE_DIAG_CHANNEL_SWITCH_ANOUNCEMENT,
     WLAN_PE_DIAG_ROAM_CANDIDATE_FOUND,
 }WLAN_PE_DIAG_EVENT_TYPE;
-
+#ifdef FEATURE_WLAN_DIAG_SUPPORT
 void limDiagEventReport(tpAniSirGlobal pMac, tANI_U16 eventType, tpPESession pSessionEntry, tANI_U16 status, tANI_U16 reasonCode);
-#endif /* FEATURE_WLAN_DIAG_SUPPORT */
-
+#else
+#define limDiagEventReport(...)
+#endif
 void peSetResumeChannel(tpAniSirGlobal pMac, tANI_U16 channel, ePhyChanBondState cbState);
 /*--------------------------------------------------------------------------
   

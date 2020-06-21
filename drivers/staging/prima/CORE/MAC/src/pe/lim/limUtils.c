@@ -7673,7 +7673,6 @@ void limDiagEventReport(tpAniSirGlobal pMac, tANI_U16 eventType, tpPESession pSe
     WLAN_VOS_DIAG_EVENT_REPORT(&peEvent, EVENT_WLAN_PE);
     return;
 }
-
 #endif /* FEATURE_WLAN_DIAG_SUPPORT */
 
 void limProcessAddStaSelfRsp(tpAniSirGlobal pMac,tpSirMsgQ limMsgQ)
