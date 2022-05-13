@@ -828,6 +828,7 @@ static struct notifier_block smd_tty_pm_nb = {
 	.priority = 0,
 };
 
+#ifdef CONFIG_IPC_LOGGING
 /**
  * smd_tty_log_init()- Init function for IPC logging
  *
@@ -841,6 +842,7 @@ static void smd_tty_log_init(void)
 	if (!smd_tty_log_ctx)
 		pr_err("%s: Unable to create IPC log", __func__);
 }
+#endif
 
 static struct tty_driver *smd_tty_driver;
 
