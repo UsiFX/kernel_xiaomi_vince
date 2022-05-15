@@ -10,7 +10,7 @@ PATH="${PWD}/los-4.9-32/bin:$PATH"
 PATH="${PWD}/los-4.9-64/bin:$PATH"
 export ZIP_DIR="$(pwd)/AnyKernel3"
 export KERNEL_DIR=$(pwd)
-export CLANG_COMPILE="azure"
+export CLANG_COMPILE="proton"
 export KBUILD_BUILD_USER="rk134"
 export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 
@@ -77,9 +77,9 @@ function clone_tc() {
 [ -d ${TC_PATH} ] || mkdir ${TC_PATH}
 
 if [ "$CLANG_COMPILE" == "proton" ]; then
-	git clone --depth=1 https://github.com/kdrag0n/proton-clang.git ${TC_PATH}/clang
-	export PATH="${TC_PATH}/clang/bin:$PATH"
-	export STRIP="${TC_PATH}/clang/aarch64-linux-gnu/bin/strip"
+	git clone --depth=1 https://github.com/kdrag0n/proton-clang.git ${TC_PATH}/clang-proton
+	export PATH="${TC_PATH}/clang-proton/bin:$PATH"
+	export STRIP="${TC_PATH}/clang-proton/aarch64-linux-gnu/bin/strip"
 	export COMPILER="Clang 14.0.0"
 elif [ "$CLANG_COMPILE" == "azure" ]; then
     git clone --depth=1 https://gitlab.com/Panchajanya1999/azure-clang clang --depth=1
@@ -120,12 +120,44 @@ function error_sticker() {
 function compile() {
 DATE=`date`
 BUILD_START=$(date +"%s")
-make O=out ARCH=arm64 vince-perf_defconfig
-make -j$(nproc --all) O=out \
-                ARCH=arm64 \
-			    CC=clang \
-			    CROSS_COMPILE=aarch64-linux-gnu- \
-			    CROSS_COMPILE_ARM32=arm-linux-gnueabi- |& tee -a $HOME/build/build${BUILD}.txt
+make -j$(nproc --all) \
+    O=out \
+    ARCH=arm64 \
+    CC=clang \
+    AR=llvm-ar \
+    AS=llvm-as \
+    LD=ld.lld \
+    NM=llvm-nm \
+    OBJCOPY=llvm-objcopy \
+    OBJDUMP=llvm-objdump \
+    READELF=llvm-readelf \
+    OBJSIZE=llvm-size \
+    STRIP=llvm-strip \
+    HOSTCC=clang \
+    HOSTCXX=clang++ \
+    HOSTLD=ld.lld \
+    CLANG_TRIPLE=aarch64-linux-gnu- \
+    "$CONFIG"
+
+make -j$(nproc --all) \
+    O=out \
+    ARCH=arm64 \
+    CC=clang \
+    AR=llvm-ar \
+    AS=llvm-as \
+    LD=ld.lld \
+    NM=llvm-nm \
+    OBJCOPY=llvm-objcopy \
+    OBJDUMP=llvm-objdump \
+    OBJSIZE=llvm-size \
+    READELF=llvm-readelf \
+    STRIP=llvm-strip \
+    HOSTCC=clang \
+    HOSTCXX=clang++ \
+    HOSTLD=ld.lld \
+    CLANG_TRIPLE=aarch64-linux-gnu- \
+    CROSS_COMPILE=aarch64-linux-gnu- \
+    CROSS_COMPILE_ARM32=arm-linux-gnueabi- |& tee -a $HOME/build/build${BUILD}.txt
 
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
