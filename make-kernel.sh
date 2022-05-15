@@ -10,7 +10,7 @@ PATH="${PWD}/los-4.9-32/bin:$PATH"
 PATH="${PWD}/los-4.9-64/bin:$PATH"
 export ZIP_DIR="$(pwd)/AnyKernel3"
 export KERNEL_DIR=$(pwd)
-export CLANG_COMPILE="proton"
+export CLANG_COMPILE="none"
 export KBUILD_BUILD_USER="rk134"
 export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 
@@ -86,11 +86,18 @@ elif [ "$CLANG_COMPILE" == "azure" ]; then
     git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 los-4.9-64 --depth=1
     git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9 los-4.9-32 --depth=1
     export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
-else
+elif [ "$CLANG_COMPILE" == "atom" ]; then
     git clone --depth=1 https://gitlab.com/ElectroPerf/atom-x-clang clang --depth=1
     git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 los-4.9-64 --depth=1
     git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9 los-4.9-32 --depth=1
     export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
+else
+	wget -O 64.zip https://github.com/mvaisakh/gcc-arm64/archive/1a4410a4cf49c78ab83197fdad1d2621760bdc73.zip;unzip 64.zip;mv gcc-arm64-1a4410a4cf49c78ab83197fdad1d2621760bdc73 gcc64
+	wget -O 32.zip https://github.com/mvaisakh/gcc-arm/archive/c8b46a6ab60d998b5efa1d5fb6aa34af35a95bad.zip;unzip 32.zip;mv gcc-arm-c8b46a6ab60d998b5efa1d5fb6aa34af35a95bad gcc32
+	GCC64_DIR=$KERNEL_DIR/gcc64
+	GCC32_DIR=$KERNEL_DIR/gcc32
+	export KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-elf-gcc --version | head -n 1)
+	PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
 fi
 }
 
@@ -120,44 +127,57 @@ function error_sticker() {
 function compile() {
 DATE=`date`
 BUILD_START=$(date +"%s")
-make -j$(nproc --all) \
-    O=out \
-    ARCH=arm64 \
-    CC=clang \
-    AR=llvm-ar \
-    AS=llvm-as \
-    LD=ld.lld \
-    NM=llvm-nm \
-    OBJCOPY=llvm-objcopy \
-    OBJDUMP=llvm-objdump \
-    READELF=llvm-readelf \
-    OBJSIZE=llvm-size \
-    STRIP=llvm-strip \
-    HOSTCC=clang \
-    HOSTCXX=clang++ \
-    HOSTLD=ld.lld \
-    CLANG_TRIPLE=aarch64-linux-gnu- \
-    "$CONFIG"
+if [ "$CLANG_COMPILE" == "none" ]; then
+    make O=out vince-perf_defconfig
+    make -j$(nproc -all) \
+        CROSS_COMPILE_ARM32=arm-eabi- \
+        CROSS_COMPILE=aarch64-elf- \
+        LD=aarch64-elf-ld.lld \
+        AR=llvm-ar \
+        NM=llvm-nm \
+        OBJCOPY=llvm-objcopy \
+        OBJDUMP=llvm-objdump \
+        CC=aarch64-elf-gcc \
+        STRIP=llvm-strip |& tee -a $HOME/build/build${BUILD}.txt
+else
+    make -j$(nproc --all) \
+        O=out \
+        ARCH=arm64 \
+        CC=clang \
+        AR=llvm-ar \
+        AS=llvm-as \
+        LD=ld.lld \
+        NM=llvm-nm \
+        OBJCOPY=llvm-objcopy \
+        OBJDUMP=llvm-objdump \
+        READELF=llvm-readelf \
+        OBJSIZE=llvm-size \
+        STRIP=llvm-strip \
+        HOSTCC=clang \
+        HOSTCXX=clang++ \
+        HOSTLD=ld.lld \
+        CLANG_TRIPLE=aarch64-linux-gnu- \
+        "$CONFIG"
 
-make -j$(nproc --all) \
-    O=out \
-    ARCH=arm64 \
-    CC=clang \
-    AR=llvm-ar \
-    AS=llvm-as \
-    LD=ld.lld \
-    NM=llvm-nm \
-    OBJCOPY=llvm-objcopy \
-    OBJDUMP=llvm-objdump \
-    OBJSIZE=llvm-size \
-    READELF=llvm-readelf \
-    STRIP=llvm-strip \
-    HOSTCC=clang \
-    HOSTCXX=clang++ \
-    HOSTLD=ld.lld \
-    CLANG_TRIPLE=aarch64-linux-gnu- \
-    CROSS_COMPILE=aarch64-linux-gnu- \
-    CROSS_COMPILE_ARM32=arm-linux-gnueabi- |& tee -a $HOME/build/build${BUILD}.txt
+    make -j$(nproc --all) \
+        O=out \
+        ARCH=arm64 \
+        CC=clang \
+        AR=llvm-ar \
+        AS=llvm-as \
+        LD=ld.lld \
+        NM=llvm-nm \
+        OBJCOPY=llvm-objcopy \
+        OBJDUMP=llvm-objdump \
+        OBJSIZE=llvm-size \
+        READELF=llvm-readelf \
+        STRIP=llvm-strip \
+        HOSTCC=clang \
+        HOSTCXX=clang++ \
+        HOSTLD=ld.lld \
+        CLANG_TRIPLE=aarch64-linux-gnu- \
+        CROSS_COMPILE=aarch64-linux-gnu- \
+        CROSS_COMPILE_ARM32=arm-linux-gnueabi- |& tee -a $HOME/build/build${BUILD}.txt
 
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
