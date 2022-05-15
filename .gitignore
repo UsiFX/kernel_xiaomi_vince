@@ -126,3 +126,7 @@ Android.bp
 
 # Ignore out directory
 out/
+
+# Ignore clang and related directories
+clang/
+los*/
