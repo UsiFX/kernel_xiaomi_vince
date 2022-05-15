@@ -130,3 +130,7 @@ out/
 # Ignore clang and related directories
 clang/
 los*/
+
+# Ignore GCC
+gcc32/
+gcc64/
