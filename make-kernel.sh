@@ -92,9 +92,9 @@ elif [ "$CLANG_COMPILE" == "atom" ]; then
     git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9 los-4.9-32 --depth=1
     export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 else
-	wget -O 64.zip https://github.com/mvaisakh/gcc-arm64/archive/1a4410a4cf49c78ab83197fdad1d2621760bdc73.zip;unzip 64.zip;mv gcc-arm64-1a4410a4cf49c78ab83197fdad1d2621760bdc73 gcc64
-	wget -O 32.zip https://github.com/mvaisakh/gcc-arm/archive/c8b46a6ab60d998b5efa1d5fb6aa34af35a95bad.zip;unzip 32.zip;mv gcc-arm-c8b46a6ab60d998b5efa1d5fb6aa34af35a95bad gcc32
-	GCC64_DIR=$KERNEL_DIR/gcc64
+	git clone --depth=1 https://github.com/mvaisakh/gcc-arm64.git gcc64
+	git clone --depth=1 https://github.com/mvaisakh/gcc-arm.git gcc32
+    GCC64_DIR=$KERNEL_DIR/gcc64
 	GCC32_DIR=$KERNEL_DIR/gcc32
 	export KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-elf-gcc --version | head -n 1)
 	PATH=$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:$PATH
@@ -129,7 +129,7 @@ DATE=`date`
 BUILD_START=$(date +"%s")
 if [ "$CLANG_COMPILE" == "none" ]; then
     make O=out vince-perf_defconfig
-    make -j$(nproc -all) \
+    make -j$(nproc --all) \
         CROSS_COMPILE_ARM32=arm-eabi- \
         CROSS_COMPILE=aarch64-elf- \
         LD=aarch64-elf-ld.lld \
@@ -178,7 +178,7 @@ else
         CLANG_TRIPLE=aarch64-linux-gnu- \
         CROSS_COMPILE=aarch64-linux-gnu- \
         CROSS_COMPILE_ARM32=arm-linux-gnueabi- |& tee -a $HOME/build/build${BUILD}.txt
-
+fi
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
 }
