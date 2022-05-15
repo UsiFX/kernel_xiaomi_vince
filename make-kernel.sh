@@ -136,8 +136,8 @@ function make_flashable() {
     
 cd $ZIP_DIR
 dir
-rm -rf zIm*
-rm -rf Platinum*
+rm -rf AnyKernel*
+git clone --depth=1 https://github.com/rk134/AnyKernel3.git AnyKernel3
 cp $KERN_IMG $ZIP_DIR/zImage
 if [ "$TYPE" == "stable" ]; then
     zip -r9 FluidKernel-VINCE-[STABLE].zip * -x .git README.md *placeholder
