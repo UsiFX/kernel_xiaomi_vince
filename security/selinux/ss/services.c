@@ -82,6 +82,7 @@ const char *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
 	"nnp_nosuid_transition"
 };
 
+int selinux_policycap_netpeer;
 int selinux_policycap_openperm;
 int selinux_policycap_alwaysnetwork;
 int selinux_policycap_nnp_nosuid_transition;
