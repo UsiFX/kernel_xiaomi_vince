@@ -195,7 +195,7 @@ dir
 rm -rf AnyKernel*
 git clone --depth=1 https://github.com/rk134/AnyKernel3.git AnyKernel3
 cd AnyKer*
-cp $KERN_IMG AnyKernel3/
+cp $KERN_IMG AnyKernel3/Image.gz-dtb
 if [ "$TYPE" == "stable" ]; then
     zip -r9 FluidKernel-VINCE-[STABLE].zip *
 elif [ "$TYPE" == "beta" ]; then
@@ -203,9 +203,9 @@ elif [ "$TYPE" == "beta" ]; then
 else
     zip -r9 FluidKernel-VINCE-[TEST].zip *
 fi
-ZIP=$(echo *.zip)
+ZIP=$(echo $(pwd)/*.zip)
 tg_pushzip
-
+cd ..
 }
 
 # Credits: @madeofgreat
