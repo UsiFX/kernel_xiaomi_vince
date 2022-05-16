@@ -126,3 +126,7 @@ Android.bp
 
 # Ignore out directory
 out/
+
+# Ignore directories
+gcc*/
+AnyKernel3/
