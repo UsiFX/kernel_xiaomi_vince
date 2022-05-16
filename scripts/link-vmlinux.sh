@@ -110,7 +110,8 @@ modpost_link()
 	else
 		info LD vmlinux.o
 	fi
-
+	LDFLAGS_OLD=$LDFLAGS
+	LDFLAGS="$(echo $LDFLAGS | sed 's/ -maarch64elfb//g' | sed 's/ -maarch64elf//g')"
 	${LDFINAL} ${LDFLAGS} -r -o ${1} $(lto_lds) ${objects}
 }
 
