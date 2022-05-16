@@ -892,8 +892,13 @@ endif
 KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
 
 ifeq ($(ld-name),lld)
-KBUILD_LDFLAGS += --lto-O3
-LDFLAGS += --lto-O3 -z norelro
+	ifeq ($(cc-name),clang)
+		KBUILD_LDFLAGS += --lto-O3
+		LDFLAGS += --lto-O3 -z norelro
+	else
+		KBUILD_LDFLAGS += -O3
+		LDFLAGS += -O3
+	endif
 endif
 
 KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
