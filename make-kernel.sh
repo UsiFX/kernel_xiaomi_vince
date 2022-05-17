@@ -20,6 +20,20 @@ export KBUILD_BUILD_USER="rk134"
 
 # FUNCTIONS
 
+# Ask Telegram Channel/Chat ID -- thanks to @Ghostmaster69-dev
+if [[ -z ${CHANNEL_ID} ]]; then
+    echo -n "Sup dude! Please give me your telegram channel ID: "
+    read -r tg_channel_id
+    CHANNEL_ID="${tg_channel_id}"
+fi
+
+# Ask Telegram Bot API Token -- thanks to @Ghostmaster69-dev
+if [[ -z ${TELEGRAM_TOKEN} ]]; then
+    echo -n "Please give me your telegram bot token: "
+    read -r tg_token
+    TELEGRAM_TOKEN="${tg_token}"
+fi
+
 # Ask type of build for building
 if [[ -z ${TYPE} ]]; then
 	echo -n "Please enter the type of build: "
