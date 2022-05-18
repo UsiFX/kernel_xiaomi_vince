@@ -96,8 +96,8 @@ elif [ "$CLANG_COMPILE" == "atom" ]; then
     git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9 los-4.9-32 --depth=1
     export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 else
-	git clone --depth=1 https://github.com/mvaisakh/gcc-arm64.git gcc64
-	git clone --depth=1 https://github.com/mvaisakh/gcc-arm.git gcc32
+	git clone --depth=1 https://github.com/mvaisakh/gcc-arm64.git gcc64 -b gcc-new
+	git clone --depth=1 https://github.com/mvaisakh/gcc-arm.git gcc32 -b gcc-new
     GCC64_DIR=$KERNEL_DIR/gcc64
 	GCC32_DIR=$KERNEL_DIR/gcc32
 	export KBUILD_COMPILER_STRING=$("$GCC64_DIR"/bin/aarch64-elf-gcc --version | head -n 1)
