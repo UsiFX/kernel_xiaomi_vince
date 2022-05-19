@@ -15,7 +15,7 @@ else
 fi
 export ZIP_DIR="$(pwd)/AnyKernel3"
 export KERNEL_DIR=$(pwd)
-export CLANG_COMPILE="none"
+export CLANG_COMPILE="liquid"
 export KBUILD_BUILD_USER="rk134"
 
 # FUNCTIONS
@@ -92,6 +92,11 @@ elif [ "$CLANG_COMPILE" == "azure" ]; then
     export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 elif [ "$CLANG_COMPILE" == "atom" ]; then
     git clone --depth=1 https://gitlab.com/ElectroPerf/atom-x-clang clang --depth=1
+    git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 los-4.9-64 --depth=1
+    git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9 los-4.9-32 --depth=1
+    export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
+elif [ "$CLANG_COMPILE" == "liquid" ]; then
+    git clone --depth=1 https://gitlab.com/rk134/liquid-clang clang --depth=1
     git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 los-4.9-64 --depth=1
     git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9 los-4.9-32 --depth=1
     export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
