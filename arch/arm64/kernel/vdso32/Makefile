@@ -5,9 +5,9 @@
 # A mix between the arm64 and arm vDSO Makefiles.
 
 ifeq ($(cc-name),clang)
-  CC_ARM32 := $(CC) $(CLANG_TARGET_ARM32) -no-integrated-as
+  CC_ARM32 := $(CC) $(CLANG_TARGET_ARM32) -no-integrated-as $(CLANG_GCC32_TC) $(CLANG_PREFIX32)
 else
-  CC_ARM32 := $(CROSS_COMPILE_ARM32)$(cc-name)
+  CC_ARM32 ?= $(CROSS_COMPILE_ARM32)$(cc-name)
 endif
 
 # Same as cc-*option, but using CC_ARM32 instead of CC
@@ -90,6 +90,19 @@ VDSO_CFLAGS += -D__uint128_t='void*'
 # (on GCC 4.8 or older, there is unfortunately no way to silence this warning)
 VDSO_CFLAGS += $(call cc32-disable-warning,shift-count-overflow)
 VDSO_CFLAGS += -Wno-int-to-pointer-cast
+
+# Compile as THUMB2 or ARM. Unwinding via frame-pointers in THUMB2 is
+# unreliable.
+ifeq ($(CONFIG_THUMB2_COMPAT_VDSO), y)
+VDSO_CFLAGS += -mthumb -fomit-frame-pointer
+else
+VDSO_CFLAGS += -marm
+endif
+
+ifeq ($(cc-name),clang)
+# Snapdragon LLVM specific warning
+VDSO_CFLAGS += $(call cc32-disable-warning, vectorizer-no-neon)
+endif
 
 VDSO_AFLAGS := $(VDSO_CAFLAGS)
 VDSO_AFLAGS += -D__ASSEMBLY__
