@@ -128,5 +128,6 @@ Android.bp
 out/
 
 # Ignore directories
+clang/
 gcc*/
 AnyKernel3/
