@@ -96,6 +96,9 @@ elif [ "$CLANG_COMPILE" == "atom" ]; then
     git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9 los-4.9-32 --depth=1
     export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 elif [ "$CLANG_COMPILE" == "liquid" ]; then
+    PATH="${PWD}/clang/bin:$PATH"
+    PATH="${PWD}/los-4.9-32/bin:$PATH"
+    PATH="${PWD}/los-4.9-64/bin:$PATH"
     git clone --depth=1 https://gitlab.com/rk134/liquid-clang clang --depth=1
     git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 los-4.9-64 --depth=1
     git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9 los-4.9-32 --depth=1
@@ -184,6 +187,7 @@ else
         HOSTCC=clang \
         HOSTCXX=clang++ \
         HOSTLD=ld.lld \
+        LLVM=1 \
         CLANG_TRIPLE=aarch64-linux-gnu- \
         CROSS_COMPILE=aarch64-linux-gnu- \
         CROSS_COMPILE_ARM32=arm-linux-gnueabi- |& tee -a $HOME/build/build${BUILD}.txt
