@@ -130,3 +130,4 @@ out/
 # Ignore directories
 clang*/
 gcc*/
+AnyKernel*/
