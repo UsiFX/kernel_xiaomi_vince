@@ -7,7 +7,7 @@ export CONFIG="vince-perf_defconfig"
 export TC_PATH="$HOME/toolchains"
 export ZIP_DIR="$(pwd)/AnyKernel3"
 export KERNEL_DIR="$(pwd)"
-export CLANG_COMPILE="proton"
+export CLANG_COMPILE="azure"
 export KBUILD_BUILD_USER="rk134"
 
 # FUNCTIONS
@@ -188,14 +188,14 @@ function make_flashable() {
 dir
 rm -rf AnyKernel*
 git clone --depth=1 https://github.com/rk134/AnyKernel3.git AnyKernel3
-cd $ZIP_DIR
 cp $KERN_IMG AnyKernel3/Image.gz-dtb
+cd $ZIP_DIR
 if [ "$TYPE" == "stable" ]; then
-    zip -r9 FluidKernel-VINCE-[STABLE].zip *
+    zip -r9 LiquidKernel-VINCE-[STABLE].zip *
 elif [ "$TYPE" == "beta" ]; then
-    zip -r9 FluidKernel-VINCE-[BETA].zip *
+    zip -r9 LiquidKernel-VINCE-[BETA].zip *
 else
-    zip -r9 FluidKernel-VINCE-[TEST].zip *
+    zip -r9 LiquidKernel-VINCE-[TEST].zip *
 fi
 ZIP=$(echo $(pwd)/*.zip)
 tg_pushzip
