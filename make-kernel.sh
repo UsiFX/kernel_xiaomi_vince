@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # Copyright (C) 2021-2022 rk134
 # Thanks to eun0115, starlight5234 and ghostmaster69-dev
